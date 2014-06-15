@@ -23,7 +23,7 @@ module ScheduleAtts
     options[:date]       &&= ScheduleAttributes.parse_in_timezone(options[:date])
     options[:until_date] &&= ScheduleAttributes.parse_in_timezone(options[:until_date])
 
-    if options[:repeat].to_i == 0
+    if options[:repeat].present? && options[:repeat].to_i == 0
       @schedule = IceCube::Schedule.new(options[:date])
       @schedule.add_recurrence_date(options[:date])
     else
@@ -36,7 +36,7 @@ module ScheduleAtts
           IceCube::Rule.weekly(options[:interval]).day( *IceCube::DAYS.keys.select{|day| options[day].to_i == 1 } )
       end
 
-      rule.until(options[:until_date]) if options[:ends] == 'eventually'
+      rule.until(options[:until_date]) unless options[:until_date].blank?
 
       @schedule.add_recurrence_rule(rule)
     end
