@@ -28,7 +28,7 @@ Because they are coming from a form, all parameters are expected to be in string
 
 ##### `:repeat`
 
-Can be `0` or `1`. The parameter should respond to `:to_i`. `0` indicates that the event does not repeat. Anything else indicates that the event repeats.
+Optional. Can be `0` or `1`. The parameter should respond to `:to_i`. `0` indicates that the event does not repeat. Anything else indicates that the event repeats.
 
 #### Parameters for non-repeating events
 
@@ -45,6 +45,10 @@ The following parameters will only be used if the `repeat` parameter is `1`.
 ##### `:start_date`
 
 The date at which the event starts repeating. Must be parseable by `Time.parse`.
+
+#### `:until_date`
+
+The date where the event ends. Must be parseable by `Time.parse`.
 
 #### `:interval_unit`
 
