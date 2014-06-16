@@ -9,10 +9,10 @@ module ScheduleAtts
   
   def schedule
     @schedule ||= begin
-      if schedule_yaml.blank?
+      if schedule_hash.blank?
         IceCube::Schedule.new(Time.now.utc).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
       else
-        IceCube::Schedule.from_yaml(schedule_yaml)
+        IceCube::Schedule.from_hash(schedule_hash)
       end
     end
   end
@@ -36,7 +36,7 @@ module ScheduleAtts
 
     @schedule.add_recurrence_rule(rule)
 
-    self.schedule_yaml = @schedule.to_yaml
+    self.schedule_hash = @schedule.to_hash
   end
 
   def schedule_attributes
@@ -77,3 +77,5 @@ module ScheduleAtts
     end
   end
 end
+
+ScheduleAttributes = ScheduleAtts
