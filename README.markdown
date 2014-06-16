@@ -26,27 +26,11 @@ E.x.
 
 Because they are coming from a form, all parameters are expected to be in string format.
 
-##### `:repeat`
-
-Optional. Can be `0` or `1`. The parameter should respond to `:to_i`. `0` indicates that the event does not repeat. Anything else indicates that the event repeats.
-
-#### Parameters for non-repeating events
-
-The following parameters will only be used if the `repeat` parameter is `0`.
-
-##### `:date`
-
-The date that this (non-repeating) event is scheduled for. Should be parseable by `Time.parse`. This parameter is only used if `:repeat` is `0`.
-
-#### Parameters for repeating events
-
-The following parameters will only be used if the `repeat` parameter is `1`.
-
-##### `:start_date`
+##### `:start_time`
 
 The date at which the event starts repeating. Must be parseable by `Time.parse`.
 
-#### `:until_date`
+#### `:until_time`
 
 The date where the event ends. Must be parseable by `Time.parse`.
 
@@ -68,4 +52,4 @@ Provides an OStruct with methods that correspond to the attributes accepted by `
 
 ##`schedule`
 
-Returns a the `IceCube::Schedule` object that is serialized to the model's `schedule_yaml` field. If there is none, it returns a schedule with `start_date` of the current date, recurring daily, ending never.
+Returns a the `IceCube::Schedule` object that is serialized to the model's `schedule_yaml` field. If there is none, it returns a schedule with `start_time` of the current date, recurring daily, ending never.
