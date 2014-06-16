@@ -12,7 +12,7 @@ module ScheduleAttributes
       if schedule_yaml.blank?
         IceCube::Schedule.new(Time.now.utc).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
       else
-        IceCube::Schedule.from_yaml(schedule_haml)
+        IceCube::Schedule.from_yaml(schedule_yaml)
       end
     end
   end
