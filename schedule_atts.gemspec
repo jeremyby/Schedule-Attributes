@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "schedule_atts/version"
+require "schedule_attributes/version"
 
 Gem::Specification.new do |s|
-  s.name        = "schedule_atts"
-  s.version     = ScheduleAtts::VERSION
+  s.name        = "schedule_attributes"
+  s.version     = ScheduleAttributes::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Mike Nicholaides"]
   s.email       = ["mike@ablegray.com"]
