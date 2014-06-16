@@ -10,7 +10,7 @@ To use, include the `ScheduleAttributes` module in your model class.
       include ScheduleAttributes
     end
 
-Your model must respond to `:schedule_hash` and `:schedule_hash=`, because ScheduleAttributes will serialize and deserialize the schedule in YAML using this column.  If you are using ActiveRecord, make a string column called `schedule_hash`.
+Your model must respond to `:schedule_yaml` and `:schedule_yaml=`, because ScheduleAttributes will serialize and deserialize the schedule in YAML using this column.  If you are using ActiveRecord, make a string column called `schedule_yaml`.
 
 You model will gain the following methods:
 
