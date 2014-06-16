@@ -3,7 +3,7 @@ require 'active_support'
 require 'active_support/time_with_zone'
 require 'ostruct'
 
-module ScheduleAtts
+module ScheduleAttributes
   # Your code goes here...
   DAY_NAMES = Date::DAYNAMES.map(&:downcase).map(&:to_sym)
   
@@ -77,5 +77,3 @@ module ScheduleAtts
     end
   end
 end
-
-ScheduleAttributes = ScheduleAtts

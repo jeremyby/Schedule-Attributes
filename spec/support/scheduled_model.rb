@@ -1,4 +1,4 @@
-require 'schedule_atts'
+require 'schedule_attributes'
 
 class ScheduledModel
   include ScheduleAttributes
