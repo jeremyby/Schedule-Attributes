@@ -1,3 +1,3 @@
-module ScheduleAtts
+module ScheduleAttributes
   VERSION = "0.0.1"
 end
