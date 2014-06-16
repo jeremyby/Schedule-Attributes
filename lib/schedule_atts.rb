@@ -6,10 +6,11 @@ require 'ostruct'
 module ScheduleAtts
   # Your code goes here...
   DAY_NAMES = Date::DAYNAMES.map(&:downcase).map(&:to_sym)
+  
   def schedule
     @schedule ||= begin
       if schedule_yaml.blank?
-        IceCube::Schedule.new(Date.today.to_time).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
+        IceCube::Schedule.new(Time.now.utc).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
       else
         IceCube::Schedule.from_yaml(schedule_yaml)
       end
@@ -19,27 +20,21 @@ module ScheduleAtts
   def schedule_attributes=(options)
     options = options.dup
     options[:interval] = options[:interval].to_i
-    options[:start_date] &&= ScheduleAttributes.parse_in_timezone(options[:start_date])
-    options[:date]       &&= ScheduleAttributes.parse_in_timezone(options[:date])
-    options[:until_date] &&= ScheduleAttributes.parse_in_timezone(options[:until_date])
+    options[:start_time] &&= ScheduleAttributes.parse_in_timezone(options[:start_time])
+    options[:until_time] &&= ScheduleAttributes.parse_in_timezone(options[:until_time])
 
-    if options[:repeat].present? && options[:repeat].to_i == 0
-      @schedule = IceCube::Schedule.new(options[:date])
-      @schedule.add_recurrence_date(options[:date])
-    else
-      @schedule = IceCube::Schedule.new(options[:start_date])
+    @schedule = IceCube::Schedule.new(options[:start_time])
 
-      rule = case options[:interval_unit]
-        when 'day'
-          IceCube::Rule.daily options[:interval]
-        when 'week'
-          IceCube::Rule.weekly(options[:interval]).day( *IceCube::DAYS.keys.select{|day| options[day].to_i == 1 } )
-      end
-
-      rule.until(options[:until_date]) unless options[:until_date].blank?
-
-      @schedule.add_recurrence_rule(rule)
+    rule = case options[:interval_unit]
+      when 'day'
+        IceCube::Rule.daily options[:interval]
+      when 'week'
+        IceCube::Rule.weekly(options[:interval]).day( *IceCube::DAYS.keys.select{|day| options[day].to_i == 1 } )
     end
+
+    rule.until(options[:until_time]) unless options[:until_time].blank?
+
+    @schedule.add_recurrence_rule(rule)
 
     self.schedule_yaml = @schedule.to_yaml
   end
@@ -47,34 +42,27 @@ module ScheduleAtts
   def schedule_attributes
     atts = {}
 
-    if rule = schedule.rrules.first
-      atts[:repeat]     = 1
-      atts[:start_date] = schedule.start_date.to_date
-      atts[:date]       = Date.today # for populating the other part of the form
+    rule = schedule.rrules.first
+    atts[:start_time] = schedule.start_time
 
-      rule_hash = rule.to_hash
-      atts[:interval] = rule_hash[:interval]
+    rule_hash = rule.to_hash
+    atts[:interval] = rule_hash[:interval]
 
-      case rule
-      when IceCube::DailyRule
-        atts[:interval_unit] = 'day'
-      when IceCube::WeeklyRule
-        atts[:interval_unit] = 'week'
-        rule_hash[:validations][:day].each do |day_idx|
-          atts[ DAY_NAMES[day_idx] ] = 1
-        end
+    case rule
+    when IceCube::DailyRule
+      atts[:interval_unit] = 'day'
+    when IceCube::WeeklyRule
+      atts[:interval_unit] = 'week'
+      rule_hash[:validations][:day].each do |day_idx|
+        atts[ DAY_NAMES[day_idx] ] = 1
       end
+    end
 
-      if rule.until_date
-        atts[:until_date] = rule.until_date.to_date
-        atts[:ends] = 'eventually'
-      else
-        atts[:ends] = 'never'
-      end
+    if rule.until_time
+      atts[:until_time] = rule.until_time
+      atts[:ends] = 'eventually'
     else
-      atts[:repeat]     = 0
-      atts[:date]       = schedule.start_date.to_date
-      atts[:start_date] = Date.today # for populating the other part of the form
+      atts[:ends] = 'never'
     end
 
     OpenStruct.new(atts)
@@ -89,20 +77,3 @@ module ScheduleAtts
     end
   end
 end
-
-# TODO: we shouldn't need this
-ScheduleAttributes = ScheduleAtts
-
-#TODO: this should be merged into ice_cube, or at least, make a pull request or something.
-class IceCube::Rule
-  def ==(other)
-    to_hash == other.to_hash
-  end
-end
-
-class IceCube::Schedule
-  def ==(other)
-    to_hash == other.to_hash
-  end
-end
-
